@@ -1,0 +1,25 @@
+*.DS_Store
+
+# video file extensions
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.flv
+*.wmv
+*.webm
+*.vob
+*.m4v
+*.mpg
+*.mpeg
+*.m2v
+*.3gp
+
+# audio file extensions
+*.mp3
+*.wav
+*.flac
+*.m4a
+*.aac
+*.ogg
+*.wma
