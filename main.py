@@ -23,6 +23,9 @@ os.rename(audio.title+".m4a","audio.m4a")
 video_stream = ffmpeg.input('video.mp4')
 audio_stream = ffmpeg.input('audio.m4a')
 
-ffmpeg.output(audio_stream, video_stream, 'out.mp4',  crf=30,  preset='veryfast').run()
+#ffmpeg.output(audio_stream, video_stream, 'out.mp4',  crf=30,  preset='veryfast').run()
+# using multiple threads
+ffmpeg.output(audio_stream, video_stream, 'out.mp4',  crf=36,  preset='superfast', threads=5).run()    
+
 os.remove('video.mp4')
 os.remove('audio.m4a')
