@@ -11,13 +11,11 @@ print(yt.title)
 
 # download video track
 video = yt.streams.filter(progressive=False, file_extension="mp4", res="1080p").first()
-video.download()
-os.rename(video.title+".mp4","video.mp4")
+video.download(filename='video.mp4')
 
 # download audio track
-audio = yt.streams.filter(only_audio=True).first()
-audio.download()
-os.rename(audio.title+".m4a","audio.m4a")
+audio = yt.streams.filter(only_audio=True, file_extension="mp4").first()
+audio.download(filename='audio.m4a')
 
 # merge audio and video using ffmpeg
 video_stream = ffmpeg.input('video.mp4')
