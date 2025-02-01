@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>YouTube Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #thumbnail {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #4CAF50;
+            animation: spin 1s ease infinite;
+        }
+
+        h4 {
+            margin-bottom: 0;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #download-btn {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        #download-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>YouTube Video Downloader</h1>
+        <div class="form-group">
+            <label for="url">YouTube URL:</label>
+            <input type="text" id="url" placeholder="Enter YouTube URL">
+        </div>
+
+        <div class="form-group hidden" id="info-section">
+            <h4 id="title"></h4>
+            <div id="thumbnail-container"></div>
+            <label for="resolution">Select Quality:</label>
+            <select id="resolution" disabled></select>
+            <button id="download-btn" disabled>Download</button>
+        </div>
+    </div>
+
+    <div class="spinner-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('url');
+        const infoSection = document.getElementById('info-section');
+        const resolutionSelect = document.getElementById('resolution');
+        const downloadBtn = document.getElementById('download-btn');
+        const thumbnailContainer = document.getElementById('thumbnail-container');
+        const title = document.getElementById('title');
+        const spinnerOverlay = document.querySelector('.spinner-overlay');
+
+
+        // Debounce function to prevent multiple rapid requests
+        let timeout;
+        urlInput.addEventListener('input', (e) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fetchVideoInfo(e.target.value), 500);
+        });
+
+        resolutionSelect.addEventListener('change', updateDownloadButton);
+        downloadBtn.addEventListener('click', downloadVideo);
+
+        async function fetchVideoInfo(url) {
+            if (!isValidYouTubeUrl(url)) {
+                resetUI();
+                return;
+            }
+
+
+            try {
+                spinnerOverlay.classList.remove('hidden');
+                const response = await fetch(`/video-info?url=${encodeURIComponent(url)}`);
+                if (!response.ok) throw new Error('Failed to fetch video info');
+
+                const data = await response.json();
+
+                infoSection.classList.remove('hidden');
+                thumbnailContainer.innerHTML = `<img id="thumbnail" src="${data.thumbnail_url}" alt="Video thumbnail">`;
+                title.innerHTML = data.title;
+                resolutionSelect.innerHTML = data.resolutions
+                    .map(res => `<option value="${res}">${res}</option>`)
+                    .join('');
+
+                resolutionSelect.disabled = false;
+                updateDownloadButton();
+            } catch (error) {
+                console.error('Error:', error);
+                resetUI();
+                alert('Error fetching video information. Please check the URL.');
+            } finally {
+                spinnerOverlay.classList.add('hidden');
+            }
+        }
+
+        function updateDownloadButton() {
+            if (urlInput.value && resolutionSelect.value) {
+                downloadBtn.disabled = false;
+            } else {
+                downloadBtn.disabled = true;
+            }
+        }
+        function isValidYouTubeUrl(url) {
+            return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+/.test(url);
+        }
+        async function downloadVideo() {
+            spinnerOverlay.classList.remove('hidden');
+
+            try {
+                const response = await fetch(
+                    `/download?url=${encodeURIComponent(urlInput.value)}&resolution=${resolutionSelect.value}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/octet-stream',
+                        }
+                    }
+                );
+
+                if (!response.ok) throw new Error('Download failed');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${title.textContent.trim().replace(/[^a-z0-9]/gi, '_')}_${resolutionSelect.value}.${resolutionSelect.value === 'audio' ? 'mp3' : 'mp4'}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Failed to download video. Please try again.');
+            } finally {
+                spinnerOverlay.classList.add('hidden');
+            }
+        }
+
+        function resetUI() {
+            infoSection.classList.add('hidden');
+            resolutionSelect.innerHTML = '';
+            resolutionSelect.disabled = true;
+            thumbnailContainer.innerHTML = '';
+            downloadBtn.querySelector('button').disabled = true;
+            downloadBtn.disabled = true;
+        }
+    </script>
+</body>
+
+</html>
