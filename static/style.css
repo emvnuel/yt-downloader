@@ -1,0 +1,240 @@
+* {
+    box-sizing: border-box;
+    font-family: "Inter", serif;
+}
+
+body {
+    background-color: #BE3F3F;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+h4 {
+    margin-bottom: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 99vh;
+    border-color: green;
+    padding: 20px;
+}
+
+.card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 95%;
+    margin: 20px;
+    overflow: hidden;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    margin-right: 2px;
+}
+
+.logo-text{
+    font-size: 20px;
+}
+
+.logo-text-red {
+    color: #BE3F3F
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.title {
+    font-weight: normal;
+}
+
+.hidden {
+    display: none;
+}
+
+#url {
+    color: #504C4C;
+    font-weight: light;
+    font-style: italic;
+    width: 100%;
+    height: 40px;
+    padding-left: 4%;
+    border-radius: 10px;
+    border: 1px solid #DDDDDD;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+}
+
+#thumbnail-container {
+    width: 100%;
+    max-width: 100%;
+    max-height: 250px;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    margin: 10px 0;
+    border-radius: 8px;
+}
+
+#thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#download-btn {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+#download-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #4CAF50;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 500px) {
+    .card {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    #thumbnail-container {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 400px) {
+    .card {
+        padding: 10px;
+    }
+
+    #url {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    #download-btn {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        width: 95%;
+        padding: 15px;
+    }
+
+    #thumbnail-container {
+        max-width: 100%;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container{
+        padding: 10px;
+    }
+
+    .card {
+        width: 100%;
+        margin: 10px;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .title {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    #url {
+        font-size: 14px;
+        padding-left: 3%;
+    }
+}
