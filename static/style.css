@@ -91,9 +91,8 @@ button:disabled {
 }
 
 #thumbnail-container {
-    width: 100%;
-    max-width: 100%;
-    max-height: 250px;
+    max-width: 640px;
+    max-height: 360px;
     aspect-ratio: 16/9;
     overflow: hidden;
     margin: 10px 0;
